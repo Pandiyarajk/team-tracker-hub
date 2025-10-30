@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "username": "admin",
+    "password": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
+    "role": "admin",
+    "name": "Admin User",
+    "email": "admin@company.com"
+  },
+  {
+    "id": 2,
+    "username": "john",
+    "password": "96d9632f363564cc3032521409cf22a852f2032eec099ed5967c0d000cec607a",
+    "role": "member",
+    "name": "John Doe",
+    "email": "john@company.com"
+  },
+  {
+    "id": 3,
+    "username": "sarah",
+    "password": "96d9632f363564cc3032521409cf22a852f2032eec099ed5967c0d000cec607a",
+    "role": "member",
+    "name": "Sarah Smith",
+    "email": "sarah@company.com"
+  },
+  {
+    "id": 4,
+    "username": "mike",
+    "password": "96d9632f363564cc3032521409cf22a852f2032eec099ed5967c0d000cec607a",
+    "role": "member",
+    "name": "Mike Johnson",
+    "email": "mike@company.com"
+  }
+]

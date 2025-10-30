@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "item_name": "MacBook Pro 16\"",
+    "assigned_to": "John Doe",
+    "serial_no": "MBP-2023-001",
+    "condition": "Excellent",
+    "remarks": "Primary work laptop"
+  },
+  {
+    "id": 2,
+    "item_name": "iPhone 13 Test Device",
+    "assigned_to": "Sarah Smith",
+    "serial_no": "IPH-13-TEST-01",
+    "condition": "Good",
+    "remarks": "iOS testing"
+  },
+  {
+    "id": 3,
+    "item_name": "Samsung Galaxy S21",
+    "assigned_to": "Mike Johnson",
+    "serial_no": "SAM-S21-TEST-01",
+    "condition": "Good",
+    "remarks": "Android testing"
+  },
+  {
+    "id": 4,
+    "item_name": "Dell Laptop",
+    "assigned_to": "Admin User",
+    "serial_no": "DELL-2023-XPS-01",
+    "condition": "Excellent",
+    "remarks": "Admin workstation"
+  }
+]

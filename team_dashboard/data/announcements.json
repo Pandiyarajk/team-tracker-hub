@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "date": "2025-10-30",
+    "title": "New Release Scheduled",
+    "message": "Version 3.2 is scheduled for release on November 15th. Please complete all regression testing by November 10th.",
+    "posted_by": "Admin User"
+  },
+  {
+    "id": 2,
+    "date": "2025-10-28",
+    "title": "Team Meeting - Sprint Planning",
+    "message": "Sprint planning meeting scheduled for November 1st at 10 AM. All team members are required to attend.",
+    "posted_by": "Admin User"
+  },
+  {
+    "id": 3,
+    "date": "2025-10-25",
+    "title": "New Test Environment Available",
+    "message": "A new staging environment is now available for integration testing. Check the servers page for details.",
+    "posted_by": "Admin User"
+  }
+]

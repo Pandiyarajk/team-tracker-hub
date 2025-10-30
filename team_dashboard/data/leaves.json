@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "John Doe",
+    "date": "2025-10-30",
+    "type": "Leave",
+    "reason": "Personal work",
+    "approval_status": "approved"
+  },
+  {
+    "id": 2,
+    "name": "Sarah Smith",
+    "date": "2025-11-02",
+    "type": "Work From Home",
+    "reason": "Home appointment",
+    "approval_status": "approved"
+  },
+  {
+    "id": 3,
+    "name": "Mike Johnson",
+    "date": "2025-11-05",
+    "type": "Sick Leave",
+    "reason": "Medical checkup",
+    "approval_status": "pending"
+  }
+]

@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}Inventory{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-laptop"></i> Team Inventory</h2>
+        </div>
+        <div class="col text-end">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addInventoryModal">
+                <i class="bi bi-plus-circle"></i> Add Item
+            </button>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Assigned To</th>
+                            <th>Serial No</th>
+                            <th>Condition</th>
+                            <th>Remarks</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in inventory %}
+                        <tr>
+                            <td><strong>{{ item.item_name }}</strong></td>
+                            <td>{{ item.assigned_to }}</td>
+                            <td><code>{{ item.serial_no }}</code></td>
+                            <td>
+                                {% if item.condition == 'Excellent' %}
+                                    <span class="badge bg-success">{{ item.condition }}</span>
+                                {% elif item.condition == 'Good' %}
+                                    <span class="badge bg-info">{{ item.condition }}</span>
+                                {% else %}
+                                    <span class="badge bg-warning">{{ item.condition }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ item.remarks }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" onclick="editInventory({{ item|tojson }})">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <a href="{{ url_for('delete_inventory', item_id=item.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">No inventory items found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Modal -->
+<div class="modal fade" id="addInventoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('add_inventory') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Inventory Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Item Name</label>
+                        <input type="text" class="form-control" name="item_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Assigned To</label>
+                        <input type="text" class="form-control" name="assigned_to" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Serial Number</label>
+                        <input type="text" class="form-control" name="serial_no" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Condition</label>
+                        <select class="form-select" name="condition" required>
+                            <option value="Excellent">Excellent</option>
+                            <option value="Good">Good</option>
+                            <option value="Fair">Fair</option>
+                            <option value="Poor">Poor</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Remarks</label>
+                        <textarea class="form-control" name="remarks" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editInventoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" id="editInventoryForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Inventory Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Item Name</label>
+                        <input type="text" class="form-control" name="item_name" id="edit_item_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Assigned To</label>
+                        <input type="text" class="form-control" name="assigned_to" id="edit_assigned_to" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Serial Number</label>
+                        <input type="text" class="form-control" name="serial_no" id="edit_serial_no" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Condition</label>
+                        <select class="form-select" name="condition" id="edit_condition" required>
+                            <option value="Excellent">Excellent</option>
+                            <option value="Good">Good</option>
+                            <option value="Fair">Fair</option>
+                            <option value="Poor">Poor</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Remarks</label>
+                        <textarea class="form-control" name="remarks" id="edit_remarks" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function editInventory(item) {
+    document.getElementById('edit_item_name').value = item.item_name;
+    document.getElementById('edit_assigned_to').value = item.assigned_to;
+    document.getElementById('edit_serial_no').value = item.serial_no;
+    document.getElementById('edit_condition').value = item.condition;
+    document.getElementById('edit_remarks').value = item.remarks;
+    document.getElementById('editInventoryForm').action = '/inventory/edit/' + item.id;
+    new bootstrap.Modal(document.getElementById('editInventoryModal')).show();
+}
+</script>
+{% endblock %}

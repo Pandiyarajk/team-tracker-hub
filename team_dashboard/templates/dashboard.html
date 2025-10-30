@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Team Management{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-speedometer2"></i> Dashboard</h2>
+            <p class="text-muted">Welcome back, {{ session.get('name') }}! Here's your team overview.</p>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-subtitle mb-2 opacity-75">Team Members</h6>
+                            <h2 class="card-title mb-0">{{ stats.total_team_members }}</h2>
+                        </div>
+                        <i class="bi bi-people-fill" style="font-size: 3rem; opacity: 0.5;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-subtitle mb-2 opacity-75">On Leave Today</h6>
+                            <h2 class="card-title mb-0">{{ stats.on_leave_today }}</h2>
+                        </div>
+                        <i class="bi bi-calendar-x" style="font-size: 3rem; opacity: 0.5;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-subtitle mb-2 opacity-75">Active Builds</h6>
+                            <h2 class="card-title mb-0">{{ stats.active_builds }}</h2>
+                        </div>
+                        <i class="bi bi-box-seam" style="font-size: 3rem; opacity: 0.5;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-subtitle mb-2 opacity-75">Total Devices</h6>
+                            <h2 class="card-title mb-0">{{ stats.total_devices }}</h2>
+                        </div>
+                        <i class="bi bi-laptop" style="font-size: 3rem; opacity: 0.5;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Today's Accomplishments -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-trophy text-warning"></i> Today's Accomplishments</h5>
+                </div>
+                <div class="card-body">
+                    {% if stats.recent_accomplishments_list %}
+                        <ul class="list-group list-group-flush">
+                            {% for acc in stats.recent_accomplishments_list %}
+                            <li class="list-group-item">
+                                <strong>{{ acc.member_name }}</strong>: {{ acc.description }}
+                                <br><small class="text-muted">{{ acc.type }}</small>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted mb-0">No accomplishments logged today</p>
+                    {% endif %}
+                </div>
+                <div class="card-footer bg-white">
+                    <a href="{{ url_for('accomplishments') }}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-arrow-right"></i> View All
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- People on Leave Today -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-calendar-check text-primary"></i> People on Leave Today</h5>
+                </div>
+                <div class="card-body">
+                    {% if stats.on_leave_names %}
+                        <ul class="list-group list-group-flush">
+                            {% for name in stats.on_leave_names %}
+                            <li class="list-group-item">
+                                <i class="bi bi-person-dash"></i> {{ name }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted mb-0">No one on leave today</p>
+                    {% endif %}
+                </div>
+                <div class="card-footer bg-white">
+                    <a href="{{ url_for('leaves') }}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-arrow-right"></i> View Leave Calendar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Jira Integration -->
+        {% if jira_issues %}
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-kanban text-success"></i> Recent Jira Issues</h5>
+                    <button class="btn btn-sm btn-outline-success" onclick="syncJira()">
+                        <i class="bi bi-arrow-clockwise"></i> Sync
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Key</th>
+                                    <th>Summary</th>
+                                    <th>Assignee</th>
+                                    <th>Status</th>
+                                    <th>Priority</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for issue in jira_issues %}
+                                <tr>
+                                    <td><code>{{ issue.key }}</code></td>
+                                    <td>{{ issue.summary }}</td>
+                                    <td>{{ issue.assignee }}</td>
+                                    <td><span class="badge bg-info">{{ issue.status }}</span></td>
+                                    <td><span class="badge bg-warning">{{ issue.priority }}</span></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Quick Actions -->
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-lightning"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <a href="{{ url_for('leaves') }}" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-calendar-plus"></i><br>Add Leave
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('accomplishments') }}" class="btn btn-outline-success w-100">
+                                <i class="bi bi-trophy"></i><br>Log Accomplishment
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('announcements') }}" class="btn btn-outline-info w-100">
+                                <i class="bi bi-megaphone"></i><br>New Announcement
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('tasks') }}" class="btn btn-outline-warning w-100">
+                                <i class="bi bi-list-check"></i><br>Manage Tasks
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function syncJira() {
+    fetch('/api/jira/sync')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(`Synced ${data.count} issues from Jira`);
+                location.reload();
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+</script>
+{% endblock %}

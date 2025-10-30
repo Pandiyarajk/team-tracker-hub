@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "date": "2025-10-28",
+    "topic": "Sprint Retrospective - Sprint 24",
+    "action_items": "1. Improve test documentation 2. Setup code review process 3. Reduce technical debt",
+    "owner": "Admin User",
+    "status": "completed"
+  },
+  {
+    "id": 2,
+    "date": "2025-10-25",
+    "topic": "Automation Framework Discussion",
+    "action_items": "1. Research new framework options 2. Create POC for best option 3. Present findings next week",
+    "owner": "John Doe",
+    "status": "in progress"
+  },
+  {
+    "id": 3,
+    "date": "2025-10-30",
+    "topic": "Release Planning - v3.2",
+    "action_items": "1. Complete regression suite 2. Update test cases 3. Prepare release notes",
+    "owner": "Sarah Smith",
+    "status": "pending"
+  }
+]
