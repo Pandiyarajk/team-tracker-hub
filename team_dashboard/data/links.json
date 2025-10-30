@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "title": "Jenkins CI/CD",
+    "url": "https://jenkins.company.com",
+    "category": "CI/CD",
+    "description": "Continuous Integration and Deployment"
+  },
+  {
+    "id": 2,
+    "title": "Jira Project Board",
+    "url": "https://company.atlassian.net",
+    "category": "Project Management",
+    "description": "Issue tracking and project management"
+  },
+  {
+    "id": 3,
+    "title": "Confluence Wiki",
+    "url": "https://company.atlassian.net/wiki",
+    "category": "Documentation",
+    "description": "Team documentation and knowledge base"
+  },
+  {
+    "id": 4,
+    "title": "TestRail",
+    "url": "https://testrail.company.com",
+    "category": "Test Management",
+    "description": "Test case management system"
+  },
+  {
+    "id": 5,
+    "title": "GitHub Repository",
+    "url": "https://github.com/company/project",
+    "category": "Version Control",
+    "description": "Source code repository"
+  },
+  {
+    "id": 6,
+    "title": "Slack Channel",
+    "url": "https://company.slack.com/qa-automation",
+    "category": "Communication",
+    "description": "Team communication channel"
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "build_name": "PaymentModule_v2.5",
+    "version": "2.5.0",
+    "date": "2025-10-28",
+    "environment": "Testing",
+    "status": "testing",
+    "changelog_url": "https://github.com/company/project/releases/v2.5.0"
+  },
+  {
+    "id": 2,
+    "build_name": "MainApp_v3.1",
+    "version": "3.1.0",
+    "date": "2025-10-25",
+    "environment": "Production",
+    "status": "release",
+    "changelog_url": "https://github.com/company/project/releases/v3.1.0"
+  },
+  {
+    "id": 3,
+    "build_name": "API_Gateway_v1.8",
+    "version": "1.8.2",
+    "date": "2025-10-20",
+    "environment": "Staging",
+    "status": "deprecated",
+    "changelog_url": "https://github.com/company/api/releases/v1.8.2"
+  }
+]

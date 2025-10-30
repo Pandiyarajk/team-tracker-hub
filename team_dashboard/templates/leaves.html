@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}Leave Management{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-calendar-check"></i> Leave & Attendance Tracker</h2>
+        </div>
+        <div class="col text-end">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addLeaveModal">
+                <i class="bi bi-plus-circle"></i> Add Leave
+            </button>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Name</th>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for leave in leaves %}
+                        <tr>
+                            <td><strong>{{ leave.name }}</strong></td>
+                            <td>{{ leave.date|format_date }}</td>
+                            <td>
+                                {% if leave.type == 'Leave' %}
+                                    <span class="badge bg-warning">{{ leave.type }}</span>
+                                {% elif leave.type == 'Work From Home' %}
+                                    <span class="badge bg-info">{{ leave.type }}</span>
+                                {% elif leave.type == 'Sick Leave' %}
+                                    <span class="badge bg-danger">{{ leave.type }}</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ leave.type }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ leave.reason }}</td>
+                            <td>
+                                {% if leave.approval_status == 'approved' %}
+                                    <span class="badge bg-success">Approved</span>
+                                {% elif leave.approval_status == 'pending' %}
+                                    <span class="badge bg-warning">Pending</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Rejected</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" onclick="editLeave({{ leave|tojson }})">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <a href="{{ url_for('delete_leave', leave_id=leave.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">No leave entries found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Leave Modal -->
+<div class="modal fade" id="addLeaveModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('add_leave') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Leave Entry</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-control" name="date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Type</label>
+                        <select class="form-select" name="type" required>
+                            <option value="Leave">Leave</option>
+                            <option value="Work From Home">Work From Home</option>
+                            <option value="Sick Leave">Sick Leave</option>
+                            <option value="Personal Leave">Personal Leave</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Reason</label>
+                        <textarea class="form-control" name="reason" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Approval Status</label>
+                        <select class="form-select" name="approval_status" required>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Leave</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Leave Modal -->
+<div class="modal fade" id="editLeaveModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" id="editLeaveForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Leave Entry</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" name="name" id="edit_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-control" name="date" id="edit_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Type</label>
+                        <select class="form-select" name="type" id="edit_type" required>
+                            <option value="Leave">Leave</option>
+                            <option value="Work From Home">Work From Home</option>
+                            <option value="Sick Leave">Sick Leave</option>
+                            <option value="Personal Leave">Personal Leave</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Reason</label>
+                        <textarea class="form-control" name="reason" id="edit_reason" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Approval Status</label>
+                        <select class="form-select" name="approval_status" id="edit_approval_status" required>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Leave</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function editLeave(leave) {
+    document.getElementById('edit_name').value = leave.name;
+    document.getElementById('edit_date').value = leave.date;
+    document.getElementById('edit_type').value = leave.type;
+    document.getElementById('edit_reason').value = leave.reason;
+    document.getElementById('edit_approval_status').value = leave.approval_status;
+    document.getElementById('editLeaveForm').action = '/leaves/edit/' + leave.id;
+    new bootstrap.Modal(document.getElementById('editLeaveModal')).show();
+}
+</script>
+{% endblock %}

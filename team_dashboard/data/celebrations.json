@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "date": "2025-10-30",
+    "member_name": "Sarah Smith",
+    "event_type": "Work Anniversary",
+    "message": "Congratulations Sarah on completing 2 years with the team!",
+    "photo_url": ""
+  },
+  {
+    "id": 2,
+    "date": "2025-10-28",
+    "member_name": "John Doe",
+    "event_type": "Achievement",
+    "message": "John automated 100+ test cases this quarter. Great work!",
+    "photo_url": ""
+  },
+  {
+    "id": 3,
+    "date": "2025-10-20",
+    "member_name": "Team",
+    "event_type": "Milestone",
+    "message": "Team achieved 90% automation coverage for payment module!",
+    "photo_url": ""
+  }
+]

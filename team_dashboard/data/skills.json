@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "name": "John Doe",
+    "skill": "Python Automation",
+    "level": "expert",
+    "last_updated": "2025-10-15"
+  },
+  {
+    "id": 2,
+    "name": "John Doe",
+    "skill": "Selenium WebDriver",
+    "level": "expert",
+    "last_updated": "2025-10-15"
+  },
+  {
+    "id": 3,
+    "name": "Sarah Smith",
+    "skill": "API Testing",
+    "level": "intermediate",
+    "last_updated": "2025-10-10"
+  },
+  {
+    "id": 4,
+    "name": "Sarah Smith",
+    "skill": "Performance Testing",
+    "level": "beginner",
+    "last_updated": "2025-10-10"
+  },
+  {
+    "id": 5,
+    "name": "Mike Johnson",
+    "skill": "Mobile Testing",
+    "level": "intermediate",
+    "last_updated": "2025-10-05"
+  },
+  {
+    "id": 6,
+    "name": "Mike Johnson",
+    "skill": "CI/CD Pipeline",
+    "level": "expert",
+    "last_updated": "2025-10-05"
+  }
+]

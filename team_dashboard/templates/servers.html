@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}Test Servers{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-hdd-network"></i> Test Servers</h2>
+        </div>
+        <div class="col text-end">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addServerModal">
+                <i class="bi bi-plus-circle"></i> Add Server
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for server in servers %}
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100 {% if server.status == 'available' %}border-success{% else %}border-warning{% endif %}">
+                <div class="card-header {% if server.status == 'available' %}bg-success{% else %}bg-warning{% endif %} text-white">
+                    <h5 class="mb-0">{{ server.server_name }}</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2"><strong>IP:</strong> <code>{{ server.ip }}</code></p>
+                    <p class="mb-2"><strong>OS:</strong> {{ server.os }}</p>
+                    <p class="mb-2"><strong>Purpose:</strong> {{ server.purpose }}</p>
+                    <p class="mb-2"><strong>Assigned Team:</strong> {{ server.assigned_team }}</p>
+                    <p class="mb-2"><strong>Attached Devices:</strong> {{ server.attached_devices }}</p>
+                    <p class="mb-0">
+                        <strong>Status:</strong> 
+                        {% if server.status == 'available' %}
+                            <span class="badge bg-success">Available</span>
+                        {% else %}
+                            <span class="badge bg-warning">In Use</span>
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="card-footer bg-white">
+                    <button class="btn btn-sm btn-outline-primary" onclick="editServer({{ server|tojson }})">
+                        <i class="bi bi-pencil"></i> Edit
+                    </button>
+                    <a href="{{ url_for('delete_server', server_id=server.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">
+                        <i class="bi bi-trash"></i> Delete
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">No servers configured yet.</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Add Modal -->
+<div class="modal fade" id="addServerModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('add_server') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Test Server</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Server Name</label>
+                            <input type="text" class="form-control" name="server_name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">IP Address</label>
+                            <input type="text" class="form-control" name="ip" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Operating System</label>
+                            <input type="text" class="form-control" name="os" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" name="status" required>
+                                <option value="available">Available</option>
+                                <option value="in use">In Use</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Purpose</label>
+                        <input type="text" class="form-control" name="purpose" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Assigned Team</label>
+                        <input type="text" class="form-control" name="assigned_team" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Attached Devices</label>
+                        <textarea class="form-control" name="attached_devices" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Server</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editServerModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="POST" id="editServerForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Test Server</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Server Name</label>
+                            <input type="text" class="form-control" name="server_name" id="edit_server_name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">IP Address</label>
+                            <input type="text" class="form-control" name="ip" id="edit_ip" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Operating System</label>
+                            <input type="text" class="form-control" name="os" id="edit_os" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" name="status" id="edit_status" required>
+                                <option value="available">Available</option>
+                                <option value="in use">In Use</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Purpose</label>
+                        <input type="text" class="form-control" name="purpose" id="edit_purpose" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Assigned Team</label>
+                        <input type="text" class="form-control" name="assigned_team" id="edit_assigned_team" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Attached Devices</label>
+                        <textarea class="form-control" name="attached_devices" id="edit_attached_devices" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Server</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function editServer(server) {
+    document.getElementById('edit_server_name').value = server.server_name;
+    document.getElementById('edit_ip').value = server.ip;
+    document.getElementById('edit_os').value = server.os;
+    document.getElementById('edit_purpose').value = server.purpose;
+    document.getElementById('edit_assigned_team').value = server.assigned_team;
+    document.getElementById('edit_attached_devices').value = server.attached_devices;
+    document.getElementById('edit_status').value = server.status;
+    document.getElementById('editServerForm').action = '/servers/edit/' + server.id;
+    new bootstrap.Modal(document.getElementById('editServerModal')).show();
+}
+</script>
+{% endblock %}

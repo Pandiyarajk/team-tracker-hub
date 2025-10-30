@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "date": "2025-10-30",
+    "member_name": "John Doe",
+    "description": "Automated 15 new test cases for payment module",
+    "impact": "Reduced manual testing time by 3 hours",
+    "type": "Automation Improvement"
+  },
+  {
+    "id": 2,
+    "date": "2025-10-29",
+    "member_name": "Sarah Smith",
+    "description": "Fixed critical bug in checkout flow",
+    "impact": "Prevented production issue",
+    "type": "Feature Test"
+  },
+  {
+    "id": 3,
+    "date": "2025-10-28",
+    "member_name": "Mike Johnson",
+    "description": "Set up new Jenkins pipeline for regression tests",
+    "impact": "Automated daily regression execution",
+    "type": "Support Task"
+  }
+]

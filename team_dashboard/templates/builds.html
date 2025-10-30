@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block title %}Builds{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-box-seam"></i> Build Tracking</h2>
+        </div>
+        <div class="col text-end">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBuildModal">
+                <i class="bi bi-plus-circle"></i> Add Build
+            </button>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Build Name</th>
+                            <th>Version</th>
+                            <th>Date</th>
+                            <th>Environment</th>
+                            <th>Status</th>
+                            <th>Changelog</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for build in builds %}
+                        <tr>
+                            <td><strong>{{ build.build_name }}</strong></td>
+                            <td><code>{{ build.version }}</code></td>
+                            <td>{{ build.date|format_date }}</td>
+                            <td>{{ build.environment }}</td>
+                            <td>
+                                {% if build.status == 'testing' %}
+                                    <span class="badge bg-warning">Testing</span>
+                                {% elif build.status == 'release' %}
+                                    <span class="badge bg-success">Release</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Deprecated</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if build.changelog_url %}
+                                    <a href="{{ build.changelog_url }}" target="_blank" class="btn btn-sm btn-outline-info">
+                                        <i class="bi bi-link-45deg"></i> View
+                                    </a>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" onclick="editBuild({{ build|tojson }})">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <a href="{{ url_for('delete_build', build_id=build.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">No builds found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Modal -->
+<div class="modal fade" id="addBuildModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('add_build') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Build</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Build Name</label>
+                            <input type="text" class="form-control" name="build_name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Version</label>
+                            <input type="text" class="form-control" name="version" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Date</label>
+                            <input type="date" class="form-control" name="date" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Environment</label>
+                            <select class="form-select" name="environment" required>
+                                <option value="Development">Development</option>
+                                <option value="Testing">Testing</option>
+                                <option value="Staging">Staging</option>
+                                <option value="Production">Production</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" name="status" required>
+                            <option value="testing">Testing</option>
+                            <option value="release">Release</option>
+                            <option value="deprecated">Deprecated</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Changelog URL</label>
+                        <input type="url" class="form-control" name="changelog_url">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Build</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editBuildModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="POST" id="editBuildForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Build</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Build Name</label>
+                            <input type="text" class="form-control" name="build_name" id="edit_build_name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Version</label>
+                            <input type="text" class="form-control" name="version" id="edit_version" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Date</label>
+                            <input type="date" class="form-control" name="date" id="edit_date" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Environment</label>
+                            <select class="form-select" name="environment" id="edit_environment" required>
+                                <option value="Development">Development</option>
+                                <option value="Testing">Testing</option>
+                                <option value="Staging">Staging</option>
+                                <option value="Production">Production</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" name="status" id="edit_status" required>
+                            <option value="testing">Testing</option>
+                            <option value="release">Release</option>
+                            <option value="deprecated">Deprecated</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Changelog URL</label>
+                        <input type="url" class="form-control" name="changelog_url" id="edit_changelog_url">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Build</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function editBuild(build) {
+    document.getElementById('edit_build_name').value = build.build_name;
+    document.getElementById('edit_version').value = build.version;
+    document.getElementById('edit_date').value = build.date;
+    document.getElementById('edit_environment').value = build.environment;
+    document.getElementById('edit_status').value = build.status;
+    document.getElementById('edit_changelog_url').value = build.changelog_url || '';
+    document.getElementById('editBuildForm').action = '/builds/edit/' + build.id;
+    new bootstrap.Modal(document.getElementById('editBuildModal')).show();
+}
+</script>
+{% endblock %}

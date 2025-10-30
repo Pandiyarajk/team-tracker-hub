@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "server_name": "QA-Test-Server-01",
+    "ip": "192.168.1.100",
+    "os": "Ubuntu 22.04 LTS",
+    "purpose": "Integration Testing",
+    "assigned_team": "QA Team",
+    "attached_devices": "Load balancer, MySQL DB",
+    "status": "in use"
+  },
+  {
+    "id": 2,
+    "server_name": "QA-Staging-Server",
+    "ip": "192.168.1.101",
+    "os": "CentOS 8",
+    "purpose": "Staging Environment",
+    "assigned_team": "QA Team",
+    "attached_devices": "Redis, PostgreSQL",
+    "status": "available"
+  },
+  {
+    "id": 3,
+    "server_name": "Performance-Test-Server",
+    "ip": "192.168.1.102",
+    "os": "Ubuntu 20.04 LTS",
+    "purpose": "Load Testing",
+    "assigned_team": "Performance Team",
+    "attached_devices": "JMeter, Grafana",
+    "status": "in use"
+  }
+]

@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Celebrations{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-balloon"></i> Team Celebrations</h2>
+        </div>
+        <div class="col text-end">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCelebrationModal">
+                <i class="bi bi-plus-circle"></i> Add Celebration
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for cel in celebrations %}
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100 border-warning border-3">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-star-fill text-warning me-2" style="font-size: 2rem;"></i>
+                        <div>
+                            <h5 class="card-title mb-0">{{ cel.member_name }}</h5>
+                            <small class="text-muted">{{ cel.event_type }}</small>
+                        </div>
+                    </div>
+                    <p class="card-text">{{ cel.message }}</p>
+                    <small class="text-muted"><i class="bi bi-calendar"></i> {{ cel.date|format_date }}</small>
+                </div>
+                <div class="card-footer bg-white">
+                    <button class="btn btn-sm btn-outline-primary" onclick="editCelebration({{ cel|tojson }})">
+                        <i class="bi bi-pencil"></i> Edit
+                    </button>
+                    <a href="{{ url_for('delete_celebration', cel_id=cel.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">
+                        <i class="bi bi-trash"></i> Delete
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">No celebrations yet. Start celebrating wins!</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Add Modal -->
+<div class="modal fade" id="addCelebrationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('add_celebration') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Celebration</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-control" name="date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Team Member Name</label>
+                        <input type="text" class="form-control" name="member_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Event Type</label>
+                        <select class="form-select" name="event_type" required>
+                            <option value="Birthday">Birthday</option>
+                            <option value="Work Anniversary">Work Anniversary</option>
+                            <option value="Achievement">Achievement</option>
+                            <option value="Milestone">Milestone</option>
+                            <option value="Award">Award</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Message</label>
+                        <textarea class="form-control" name="message" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Photo URL (optional)</label>
+                        <input type="url" class="form-control" name="photo_url">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Celebration</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editCelebrationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" id="editCelebrationForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Celebration</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-control" name="date" id="edit_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Team Member Name</label>
+                        <input type="text" class="form-control" name="member_name" id="edit_member_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Event Type</label>
+                        <select class="form-select" name="event_type" id="edit_event_type" required>
+                            <option value="Birthday">Birthday</option>
+                            <option value="Work Anniversary">Work Anniversary</option>
+                            <option value="Achievement">Achievement</option>
+                            <option value="Milestone">Milestone</option>
+                            <option value="Award">Award</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Message</label>
+                        <textarea class="form-control" name="message" id="edit_message" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Photo URL (optional)</label>
+                        <input type="url" class="form-control" name="photo_url" id="edit_photo_url">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Celebration</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function editCelebration(cel) {
+    document.getElementById('edit_date').value = cel.date;
+    document.getElementById('edit_member_name').value = cel.member_name;
+    document.getElementById('edit_event_type').value = cel.event_type;
+    document.getElementById('edit_message').value = cel.message;
+    document.getElementById('edit_photo_url').value = cel.photo_url || '';
+    document.getElementById('editCelebrationForm').action = '/celebrations/edit/' + cel.id;
+    new bootstrap.Modal(document.getElementById('editCelebrationModal')).show();
+}
+</script>
+{% endblock %}
